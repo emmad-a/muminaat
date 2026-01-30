@@ -1,17 +1,77 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback, useMemo } from "react";
 import Header from "@/components/Header";
 import TopicFilter from "@/components/TopicFilter";
 import QuestionCard from "@/components/QuestionCard";
+import SearchBar from "@/components/SearchBar";
 import { TOPICS, FIQH_QUESTIONS } from "@/data/fiqh-questions";
+import { FiqhQuestion } from "@/types/fiqh";
+
+// Search function that looks through all relevant fields
+function searchQuestions(questions: FiqhQuestion[], query: string): FiqhQuestion[] {
+  if (!query.trim()) return questions;
+
+  const searchTerm = query.toLowerCase().trim();
+
+  return questions.filter((q) => {
+    // Search in question text
+    if (q.question.toLowerCase().includes(searchTerm)) return true;
+    if (q.questionArabic?.includes(searchTerm)) return true;
+
+    // Search in topic
+    if (q.topic.toLowerCase().includes(searchTerm)) return true;
+    if (q.subtopic?.toLowerCase().includes(searchTerm)) return true;
+
+    // Search in all madhab positions
+    for (const madhab of Object.values(q.positions)) {
+      if (madhab.ruling.toLowerCase().includes(searchTerm)) return true;
+      if (madhab.evidence.toLowerCase().includes(searchTerm)) return true;
+      if (madhab.details?.toLowerCase().includes(searchTerm)) return true;
+      if (madhab.conditions?.some(c => c.toLowerCase().includes(searchTerm))) return true;
+      if (madhab.scholars?.some(s => s.toLowerCase().includes(searchTerm))) return true;
+    }
+
+    // Search in consensus
+    if (q.consensus?.toLowerCase().includes(searchTerm)) return true;
+
+    // Search in modern scholars
+    if (q.modernScholars?.some(s => s.toLowerCase().includes(searchTerm))) return true;
+
+    return false;
+  });
+}
 
 export default function Home() {
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
-  const filteredQuestions = selectedTopic
-    ? FIQH_QUESTIONS.filter((q) => q.topic === selectedTopic)
-    : FIQH_QUESTIONS;
+  const handleSearch = useCallback((query: string) => {
+    setSearchQuery(query);
+    // Clear topic filter when searching to show all results
+    if (query.trim()) {
+      setSelectedTopic(null);
+    }
+  }, []);
+
+  const filteredQuestions = useMemo(() => {
+    let results = FIQH_QUESTIONS;
+
+    // Apply topic filter
+    if (selectedTopic) {
+      results = results.filter((q) => q.topic === selectedTopic);
+    }
+
+    // Apply search filter
+    if (searchQuery.trim()) {
+      results = searchQuestions(results, searchQuery);
+    }
+
+    return results;
+  }, [selectedTopic, searchQuery]);
+
+  const resultsCount = filteredQuestions.length;
+  const totalCount = FIQH_QUESTIONS.length;
 
   return (
     <div className="min-h-screen">
@@ -49,6 +109,9 @@ export default function Home() {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {/* Search Bar */}
+        <SearchBar onSearch={handleSearch} />
+
         {/* Topic Filter */}
         <TopicFilter
           topics={TOPICS}
@@ -56,11 +119,55 @@ export default function Home() {
           onSelectTopic={setSelectedTopic}
         />
 
+        {/* Results Count */}
+        {(searchQuery || selectedTopic) && (
+          <div className="mb-6 flex items-center justify-between">
+            <p className="text-gray-600">
+              Showing <span className="font-semibold text-gray-900">{resultsCount}</span> of {totalCount} questions
+              {searchQuery && (
+                <span className="ml-2">
+                  for &quot;<span className="text-emerald-600">{searchQuery}</span>&quot;
+                </span>
+              )}
+            </p>
+            {(searchQuery || selectedTopic) && (
+              <button
+                onClick={() => {
+                  setSearchQuery("");
+                  setSelectedTopic(null);
+                }}
+                className="text-sm text-emerald-600 hover:text-emerald-700 font-medium"
+              >
+                Clear filters
+              </button>
+            )}
+          </div>
+        )}
+
         {/* Questions List */}
         <div className="space-y-8">
-          {filteredQuestions.map((question) => (
-            <QuestionCard key={question.id} question={question} />
-          ))}
+          {filteredQuestions.length > 0 ? (
+            filteredQuestions.map((question) => (
+              <QuestionCard key={question.id} question={question} />
+            ))
+          ) : (
+            <div className="text-center py-16">
+              <div className="text-6xl mb-4">🔍</div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">No questions found</h3>
+              <p className="text-gray-600 mb-4">
+                Try a different search term or browse all topics
+              </p>
+              <button
+                onClick={() => {
+                  setSearchQuery("");
+                  setSelectedTopic(null);
+                }}
+                className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors"
+              >
+                Show all questions
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Call to Action */}

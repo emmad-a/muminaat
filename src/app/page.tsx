@@ -31,6 +31,36 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Quick Access */}
+      <section className="px-6 pb-16">
+        <div className="max-w-5xl mx-auto grid grid-cols-3 gap-4">
+          <Link
+            href="/quran/feelings"
+            className="flex flex-col items-center gap-3 p-6 rounded-2xl bg-neutral-950 border border-neutral-800/80 hover:border-gold-400/30 transition-all hover:-translate-y-1"
+          >
+            <span className="text-3xl">💭</span>
+            <span className="text-sm font-medium text-neutral-300">Feelings</span>
+            <span className="text-xs text-neutral-500">Find comfort in the Quran</span>
+          </Link>
+          <Link
+            href="/quran/quiz"
+            className="flex flex-col items-center gap-3 p-6 rounded-2xl bg-neutral-950 border border-neutral-800/80 hover:border-gold-400/30 transition-all hover:-translate-y-1"
+          >
+            <span className="text-3xl">🧠</span>
+            <span className="text-sm font-medium text-neutral-300">Daily Quiz</span>
+            <span className="text-xs text-neutral-500">Test your knowledge</span>
+          </Link>
+          <Link
+            href="/quran/wrapped"
+            className="flex flex-col items-center gap-3 p-6 rounded-2xl bg-neutral-950 border border-neutral-800/80 hover:border-gold-400/30 transition-all hover:-translate-y-1"
+          >
+            <span className="text-3xl">📊</span>
+            <span className="text-sm font-medium text-neutral-300">My Wrapped</span>
+            <span className="text-xs text-neutral-500">Your monthly recap</span>
+          </Link>
+        </div>
+      </section>
+
       {/* Feature Cards */}
       <section className="px-6 pb-32">
         <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-6">

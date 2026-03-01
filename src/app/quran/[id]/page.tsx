@@ -22,6 +22,7 @@ export default function SurahPage({ params }: { params: Promise<{ id: string }> 
   const {
     playerState,
     playAyah,
+    playSurah,
     settings,
     isBookmarked,
     addBookmark,
@@ -44,7 +45,9 @@ export default function SurahPage({ params }: { params: Promise<{ id: string }> 
   }, [surahNumber, surahData]);
 
   const activeAyah =
-    playerState.currentSurah === surahNumber ? playerState.currentAyah : null;
+    playerState.currentSurah === surahNumber && playerState.audioMode === "ayah"
+      ? playerState.currentAyah
+      : null;
 
   const handlePlayAyah = (ayahNum: number) => {
     if (surahData) {
@@ -53,7 +56,10 @@ export default function SurahPage({ params }: { params: Promise<{ id: string }> 
   };
 
   const handlePlayAll = () => {
-    if (surahData) {
+    if (!surahData) return;
+    if (settings.audioMode === "surah") {
+      playSurah(surahNumber);
+    } else {
       playAyah(surahNumber, 1, surahData.meta.numberOfAyahs);
     }
   };

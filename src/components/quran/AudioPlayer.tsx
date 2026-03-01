@@ -23,9 +23,10 @@ export default function AudioPlayer() {
     setPlaybackRate,
     setRepeatMode,
     settings,
+    updateSetting,
   } = useQuranContext();
 
-  const { playbackState, currentSurah, currentAyah, duration, currentTime, playbackRate, repeatMode, totalAyahs } =
+  const { playbackState, currentSurah, currentAyah, duration, currentTime, playbackRate, repeatMode, totalAyahs, audioMode } =
     playerState;
 
   const surahInfo = currentSurah ? SURAH_NAMES[currentSurah] : null;
@@ -33,6 +34,7 @@ export default function AudioPlayer() {
   const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
   const isPlaying = playbackState === "playing";
   const isLoading = playbackState === "loading";
+  const isSurahMode = audioMode === "surah";
 
   const handleSeek = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!duration) return;
@@ -49,9 +51,18 @@ export default function AudioPlayer() {
   };
 
   const cycleRepeat = () => {
-    if (repeatMode === "none") setRepeatMode("ayah");
-    else if (repeatMode === "ayah") setRepeatMode("surah");
-    else setRepeatMode("none");
+    if (isSurahMode) {
+      // In full surah mode, only none <-> surah
+      setRepeatMode(repeatMode === "none" ? "surah" : "none");
+    } else {
+      if (repeatMode === "none") setRepeatMode("ayah");
+      else if (repeatMode === "ayah") setRepeatMode("surah");
+      else setRepeatMode("none");
+    }
+  };
+
+  const toggleAudioMode = () => {
+    updateSetting("audioMode", settings.audioMode === "ayah" ? "surah" : "ayah");
   };
 
   return (
@@ -80,7 +91,7 @@ export default function AudioPlayer() {
           <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
             {surahInfo?.transliteration || "—"}{" "}
             <span className="text-gold-400 font-normal">
-              {currentAyah ? `${currentAyah}/${totalAyahs}` : ""}
+              {isSurahMode ? "Full Surah" : currentAyah ? `${currentAyah}/${totalAyahs}` : ""}
             </span>
           </p>
           <p className="text-[11px] text-gray-400 truncate">
@@ -90,6 +101,19 @@ export default function AudioPlayer() {
 
         {/* Controls */}
         <div className="flex items-center gap-1">
+          {/* Audio Mode Toggle */}
+          <button
+            onClick={toggleAudioMode}
+            className={`px-2 h-7 flex items-center justify-center rounded-full text-[10px] font-medium border transition-colors ${
+              settings.audioMode === "surah"
+                ? "border-gold-400/50 text-gold-400"
+                : "border-gray-200 dark:border-neutral-700 text-gray-400 hover:text-gold-400 hover:border-gold-400/50"
+            }`}
+            title={`Mode: ${settings.audioMode === "ayah" ? "Ayah-by-Ayah" : "Full Surah"}`}
+          >
+            {settings.audioMode === "ayah" ? "Ayah" : "Surah"}
+          </button>
+
           {/* Speed */}
           <button
             onClick={nextSpeed}
@@ -117,6 +141,7 @@ export default function AudioPlayer() {
           <button
             onClick={prevAyah}
             className="w-9 h-9 flex items-center justify-center rounded-full text-gray-500 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-neutral-800 transition-colors"
+            title={isSurahMode ? "Back 10s" : "Previous ayah"}
           >
             <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
               <path d="M3 3V13M5 8L13 3V13L5 8Z"/>
@@ -146,6 +171,7 @@ export default function AudioPlayer() {
           <button
             onClick={nextAyah}
             className="w-9 h-9 flex items-center justify-center rounded-full text-gray-500 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-neutral-800 transition-colors"
+            title={isSurahMode ? "Forward 10s" : "Next ayah"}
           >
             <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
               <path d="M13 3V13M11 8L3 3V13L11 8Z"/>

@@ -2,12 +2,15 @@
  * Quran Feature Types
  */
 
+export type AudioMode = "ayah" | "surah";
+
 export interface Reciter {
   id: string;
   name: string;
   nameArabic: string;
   everyAyahPath: string;
   cdnSlug: string;
+  mp3QuranPath: string;
 }
 
 export interface SurahMeta {
@@ -50,6 +53,7 @@ export interface AudioPlayerState {
   currentTime: number;
   playbackRate: number;
   repeatMode: "none" | "ayah" | "surah";
+  audioMode: AudioMode;
 }
 
 export interface QuranSearchResult {
@@ -68,6 +72,7 @@ export interface QuranSettings {
   theme: "light" | "dark" | "system";
   readingMode: boolean;
   playbackRate: number;
+  audioMode: AudioMode;
 }
 
 export interface Bookmark {

@@ -16,6 +16,7 @@ export const DEFAULT_SETTINGS: QuranSettings = {
   theme: "system",
   readingMode: false,
   playbackRate: 1,
+  audioMode: "ayah",
 };
 
 function safeGet<T>(key: string): T | null {

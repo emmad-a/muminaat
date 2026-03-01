@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useRef, useCallback, useEffect } from "react";
-import { AudioPlayerState } from "@/types/quran";
-import { getAyahAudioUrl, getReciterById, preloadAudio } from "@/lib/quran-audio";
+import { AudioPlayerState, AudioMode } from "@/types/quran";
+import { getAyahAudioUrl, getReciterById, getFullSurahAudioUrl, preloadAudio } from "@/lib/quran-audio";
 
 const INITIAL_STATE: AudioPlayerState = {
   playbackState: "idle",
@@ -13,13 +13,16 @@ const INITIAL_STATE: AudioPlayerState = {
   currentTime: 0,
   playbackRate: 1,
   repeatMode: "none",
+  audioMode: "ayah",
 };
 
-export function useAudioPlayer(reciterId: string) {
+export function useAudioPlayer(reciterId: string, audioMode: AudioMode) {
   const [state, setState] = useState<AudioPlayerState>(INITIAL_STATE);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const stateRef = useRef(state);
   stateRef.current = state;
+  const audioModeRef = useRef(audioMode);
+  audioModeRef.current = audioMode;
 
   // Create audio element once
   useEffect(() => {
@@ -41,6 +44,19 @@ export function useAudioPlayer(reciterId: string) {
 
     const onEnded = () => {
       const cur = stateRef.current;
+
+      // Full surah mode — single file finished
+      if (cur.audioMode === "surah") {
+        if (cur.repeatMode === "surah") {
+          audio.currentTime = 0;
+          audio.play().catch(() => {});
+        } else {
+          setState((s) => ({ ...s, playbackState: "idle" }));
+        }
+        return;
+      }
+
+      // Ayah-by-ayah mode (existing logic)
       if (cur.repeatMode === "ayah") {
         audio.currentTime = 0;
         audio.play().catch(() => {});
@@ -60,7 +76,7 @@ export function useAudioPlayer(reciterId: string) {
           preloadAudio(getAyahAudioUrl(reciter, cur.currentSurah!, nextAyah + 1));
         }
       } else if (cur.repeatMode === "surah" && cur.currentSurah !== null) {
-        // Restart surah
+        // Restart surah from ayah 1
         const reciter = getReciterById(reciterId);
         const url = getAyahAudioUrl(reciter, cur.currentSurah, 1);
         audio.src = url;
@@ -109,12 +125,36 @@ export function useAudioPlayer(reciterId: string) {
         playbackState: "loading",
         currentTime: 0,
         duration: 0,
+        audioMode: "ayah",
       }));
 
       // Preload next
       if (ayah < totalAyahs) {
         preloadAudio(getAyahAudioUrl(reciter, surah, ayah + 1));
       }
+    },
+    [reciterId]
+  );
+
+  const playSurah = useCallback(
+    (surah: number) => {
+      const audio = audioRef.current;
+      if (!audio) return;
+      const reciter = getReciterById(reciterId);
+      const url = getFullSurahAudioUrl(reciter, surah);
+      audio.src = url;
+      audio.playbackRate = stateRef.current.playbackRate;
+      audio.play().catch(() => {});
+      setState((s) => ({
+        ...s,
+        currentSurah: surah,
+        currentAyah: null,
+        totalAyahs: 0,
+        playbackState: "loading",
+        currentTime: 0,
+        duration: 0,
+        audioMode: "surah",
+      }));
     },
     [reciterId]
   );
@@ -138,6 +178,12 @@ export function useAudioPlayer(reciterId: string) {
 
   const nextAyah = useCallback(() => {
     const cur = stateRef.current;
+    if (cur.audioMode === "surah") {
+      // In full surah mode, skip forward 10 seconds
+      const audio = audioRef.current;
+      if (audio) audio.currentTime = Math.min(audio.duration || 0, audio.currentTime + 10);
+      return;
+    }
     if (cur.currentSurah && cur.currentAyah && cur.currentAyah < cur.totalAyahs) {
       playAyah(cur.currentSurah, cur.currentAyah + 1, cur.totalAyahs);
     }
@@ -145,6 +191,12 @@ export function useAudioPlayer(reciterId: string) {
 
   const prevAyah = useCallback(() => {
     const cur = stateRef.current;
+    if (cur.audioMode === "surah") {
+      // In full surah mode, skip back 10 seconds
+      const audio = audioRef.current;
+      if (audio) audio.currentTime = Math.max(0, audio.currentTime - 10);
+      return;
+    }
     if (cur.currentSurah && cur.currentAyah && cur.currentAyah > 1) {
       playAyah(cur.currentSurah, cur.currentAyah - 1, cur.totalAyahs);
     }
@@ -164,12 +216,19 @@ export function useAudioPlayer(reciterId: string) {
   }, []);
 
   const setRepeatMode = useCallback((mode: "none" | "ayah" | "surah") => {
-    setState((s) => ({ ...s, repeatMode: mode }));
+    setState((s) => {
+      // In full surah mode, skip "ayah" repeat — only none and surah
+      if (s.audioMode === "surah" && mode === "ayah") {
+        return { ...s, repeatMode: "surah" };
+      }
+      return { ...s, repeatMode: mode };
+    });
   }, []);
 
   return {
     state,
     playAyah,
+    playSurah,
     pause,
     resume,
     stop,

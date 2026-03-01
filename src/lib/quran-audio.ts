@@ -11,6 +11,7 @@ export const RECITERS: Reciter[] = [
     nameArabic: "مشاري راشد العفاسي",
     everyAyahPath: "Alafasy_128kbps",
     cdnSlug: "ar.alafasy",
+    mp3QuranPath: "server8.mp3quran.net/afs",
   },
   {
     id: "basit",
@@ -18,6 +19,7 @@ export const RECITERS: Reciter[] = [
     nameArabic: "عبد الباسط عبد الصمد",
     everyAyahPath: "Abdul_Basit_Murattal_192kbps",
     cdnSlug: "ar.abdulbasitmurattal",
+    mp3QuranPath: "server7.mp3quran.net/basit",
   },
   {
     id: "husary",
@@ -25,6 +27,7 @@ export const RECITERS: Reciter[] = [
     nameArabic: "محمود خليل الحصري",
     everyAyahPath: "Husary_128kbps",
     cdnSlug: "ar.husary",
+    mp3QuranPath: "server13.mp3quran.net/husr",
   },
   {
     id: "sudais",
@@ -32,6 +35,7 @@ export const RECITERS: Reciter[] = [
     nameArabic: "عبدالرحمن السديس",
     everyAyahPath: "Abdurrahmaan_As-Sudais_192kbps",
     cdnSlug: "ar.abdurrrahmaansudais",
+    mp3QuranPath: "server11.mp3quran.net/sds",
   },
 ];
 
@@ -43,6 +47,10 @@ function pad(n: number, len: number): string {
 
 export function getAyahAudioUrl(reciter: Reciter, surah: number, ayah: number): string {
   return `${EVERYAYAH_BASE}/${reciter.everyAyahPath}/${pad(surah, 3)}${pad(ayah, 3)}.mp3`;
+}
+
+export function getFullSurahAudioUrl(reciter: Reciter, surah: number): string {
+  return `https://${reciter.mp3QuranPath}/${pad(surah, 3)}.mp3`;
 }
 
 export function getReciterById(id: string): Reciter {

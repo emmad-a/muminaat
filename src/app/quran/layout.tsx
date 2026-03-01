@@ -12,6 +12,7 @@ interface QuranContextType {
   // Audio
   playerState: AudioPlayerState;
   playAyah: (surah: number, ayah: number, totalAyahs: number) => void;
+  playSurah: (surah: number) => void;
   pause: () => void;
   resume: () => void;
   stop: () => void;
@@ -42,7 +43,7 @@ export function useQuranContext() {
 
 export default function QuranLayout({ children }: { children: React.ReactNode }) {
   const { settings, updateSetting } = useQuranSettings();
-  const audio = useAudioPlayer(settings.reciterId);
+  const audio = useAudioPlayer(settings.reciterId, settings.audioMode);
   const bm = useBookmarks();
   const [surahList, setSurahList] = useState<SurahMeta[]>([]);
 
@@ -69,6 +70,7 @@ export default function QuranLayout({ children }: { children: React.ReactNode })
   const ctx: QuranContextType = {
     playerState: audio.state,
     playAyah: audio.playAyah,
+    playSurah: audio.playSurah,
     pause: audio.pause,
     resume: audio.resume,
     stop: audio.stop,

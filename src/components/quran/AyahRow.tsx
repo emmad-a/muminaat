@@ -54,7 +54,7 @@ export default function AyahRow({
     <div
       id={`ayah-${ayah.numberInSurah}`}
       className={`group py-6 border-b border-gray-50 dark:border-neutral-800/50 transition-colors duration-300 ${
-        isActive ? "bg-gold-50/40 dark:bg-gold-900/10 border-l-2 border-l-gold-400 pl-4 -ml-4" : ""
+        isActive ? "bg-gold-50/40 dark:bg-gold-900/30 border-l-4 border-l-gold-400 pl-4 -ml-4 rounded-r-lg" : ""
       }`}
     >
       {/* Top bar */}

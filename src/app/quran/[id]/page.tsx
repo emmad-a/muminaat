@@ -27,6 +27,7 @@ export default function SurahPage({ params }: { params: Promise<{ id: string }> 
     playAyah,
     playSurah,
     settings,
+    updateSetting,
     isBookmarked,
     addBookmark,
     removeBookmark,
@@ -161,7 +162,7 @@ export default function SurahPage({ params }: { params: Promise<{ id: string }> 
       {/* Reading mode toggle */}
       <div className="flex items-center justify-center gap-2 mb-6">
         <button
-          onClick={() => {}}
+          onClick={() => updateSetting("readingMode", false)}
           className={`px-4 py-1.5 text-xs font-medium rounded-full transition-all ${
             !settings.readingMode
               ? "bg-gray-900 dark:bg-white text-white dark:text-gray-900"
@@ -171,7 +172,7 @@ export default function SurahPage({ params }: { params: Promise<{ id: string }> 
           Verse by Verse
         </button>
         <button
-          onClick={() => {}}
+          onClick={() => updateSetting("readingMode", true)}
           className={`px-4 py-1.5 text-xs font-medium rounded-full transition-all ${
             settings.readingMode
               ? "bg-gray-900 dark:bg-white text-white dark:text-gray-900"

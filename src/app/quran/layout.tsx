@@ -24,6 +24,7 @@ interface QuranContextType {
   // Settings
   settings: QuranSettings;
   updateSetting: <K extends keyof QuranSettings>(key: K, value: QuranSettings[K]) => void;
+  resetSettings: () => void;
   // Bookmarks
   bookmarks: Bookmark[];
   addBookmark: (surah: number, ayah: number, surahName: string) => void;
@@ -42,7 +43,7 @@ export function useQuranContext() {
 }
 
 export default function QuranLayout({ children }: { children: React.ReactNode }) {
-  const { settings, updateSetting } = useQuranSettings();
+  const { settings, updateSetting, resetSettings } = useQuranSettings();
   const audio = useAudioPlayer(settings.reciterId, settings.audioMode);
   const bm = useBookmarks();
   const [surahList, setSurahList] = useState<SurahMeta[]>([]);
@@ -81,6 +82,7 @@ export default function QuranLayout({ children }: { children: React.ReactNode })
     setRepeatMode: audio.setRepeatMode,
     settings,
     updateSetting,
+    resetSettings,
     bookmarks: bm.bookmarks,
     addBookmark: bm.addBookmark,
     removeBookmark: bm.removeBookmark,

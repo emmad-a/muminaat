@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useQuranContext } from "./layout";
 import SurahGrid from "@/components/quran/SurahGrid";
 import { SurahGridSkeleton } from "@/components/quran/LoadingSkeleton";
+import KhatamProgress from "@/components/quran/KhatamProgress";
+import { useKhatam } from "@/hooks/useKhatam";
 import { loadLastRead } from "@/lib/quran-settings";
 import { LastReadPosition } from "@/types/quran";
 
@@ -13,6 +15,7 @@ export default function QuranIndexPage() {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<"all" | "meccan" | "medinan">("all");
   const [lastRead, setLastRead] = useState<LastReadPosition | null>(null);
+  const { progress, community, claim, complete } = useKhatam();
 
   useEffect(() => {
     setLastRead(loadLastRead());
@@ -50,6 +53,41 @@ export default function QuranIndexPage() {
         <p className="text-sm text-gray-400 mt-2">
           114 Surahs &middot; 6,236 Ayahs
         </p>
+      </div>
+
+      {/* Feature Cards */}
+      <div className="grid grid-cols-3 gap-3 mb-8">
+        <Link
+          href="/quran/feelings"
+          className="flex flex-col items-center gap-2 p-4 rounded-2xl bg-neutral-900 border border-neutral-800 hover:border-gold-400/30 transition-all hover:scale-[1.02]"
+        >
+          <span className="text-2xl">💭</span>
+          <span className="text-xs font-medium text-neutral-300">Feelings</span>
+        </Link>
+        <Link
+          href="/quran/quiz"
+          className="flex flex-col items-center gap-2 p-4 rounded-2xl bg-neutral-900 border border-neutral-800 hover:border-gold-400/30 transition-all hover:scale-[1.02]"
+        >
+          <span className="text-2xl">🧠</span>
+          <span className="text-xs font-medium text-neutral-300">Daily Quiz</span>
+        </Link>
+        <Link
+          href="/quran/wrapped"
+          className="flex flex-col items-center gap-2 p-4 rounded-2xl bg-neutral-900 border border-neutral-800 hover:border-gold-400/30 transition-all hover:scale-[1.02]"
+        >
+          <span className="text-2xl">📊</span>
+          <span className="text-xs font-medium text-neutral-300">My Wrapped</span>
+        </Link>
+      </div>
+
+      {/* Khatam Progress */}
+      <div className="mb-8">
+        <KhatamProgress
+          progress={progress}
+          community={community}
+          onClaim={claim}
+          onComplete={complete}
+        />
       </div>
 
       {/* Continue reading */}

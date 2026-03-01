@@ -1,13 +1,18 @@
 "use client";
 
-import { use, useEffect } from "react";
+import { use, useEffect, useState } from "react";
 import { useQuranContext } from "../layout";
 import { useSurahData } from "@/hooks/useSurahData";
 import SurahHeader from "@/components/quran/SurahHeader";
 import AyahList from "@/components/quran/AyahList";
 import SurahNavigator from "@/components/quran/SurahNavigator";
+import ShareModal from "@/components/share/ShareModal";
 import { AyahListSkeleton } from "@/components/quran/LoadingSkeleton";
 import { saveLastRead } from "@/lib/quran-settings";
+import { recordActivity } from "@/lib/streak-store";
+import { recordSurahVisit, recordAyahsRead } from "@/lib/stats-store";
+import { ShareCardData } from "@/types/viral";
+import { SURAH_NAMES } from "@/lib/quran-api";
 
 export default function SurahPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -22,11 +27,15 @@ export default function SurahPage({ params }: { params: Promise<{ id: string }> 
     removeBookmark,
     surahList,
   } = useQuranContext();
+  const [shareData, setShareData] = useState<ShareCardData | null>(null);
 
-  // Save last read position
+  // Save last read position + record streak/stats
   useEffect(() => {
     if (surahData) {
       saveLastRead({ surah: surahNumber, ayah: 1, timestamp: Date.now() });
+      recordActivity();
+      recordSurahVisit(surahNumber);
+      recordAyahsRead(surahData.ayahs.length);
     }
   }, [surahNumber, surahData]);
 
@@ -52,6 +61,21 @@ export default function SurahPage({ params }: { params: Promise<{ id: string }> 
       const name = surahData?.meta.transliteration || `Surah ${surahNumber}`;
       addBookmark(surahNumber, ayahNum, name);
     }
+  };
+
+  const handleShare = (ayahNum: number) => {
+    if (!surahData) return;
+    const ayah = surahData.ayahs.find(a => a.numberInSurah === ayahNum);
+    if (!ayah) return;
+    const surahInfo = SURAH_NAMES[surahNumber];
+    setShareData({
+      arabicText: ayah.text,
+      translation: ayah.translation,
+      surahName: surahInfo?.transliteration || surahData.meta.transliteration,
+      surahNameArabic: surahInfo?.arabic || surahData.meta.arabic,
+      ayahNumber: ayahNum,
+      surahNumber,
+    });
   };
 
   if (isNaN(surahNumber) || surahNumber < 1 || surahNumber > 114) {
@@ -122,11 +146,17 @@ export default function SurahPage({ params }: { params: Promise<{ id: string }> 
           isBookmarked={isBookmarked}
           onPlayAyah={handlePlayAyah}
           onBookmarkAyah={handleBookmark}
+          onShareAyah={handleShare}
         />
       ) : null}
 
       {/* Nav */}
       <SurahNavigator currentSurah={surahNumber} />
+
+      {/* Share Modal */}
+      {shareData && (
+        <ShareModal data={shareData} onClose={() => setShareData(null)} />
+      )}
     </div>
   );
 }

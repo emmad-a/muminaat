@@ -14,6 +14,7 @@ interface AyahListProps {
   isBookmarked: (surah: number, ayah: number) => boolean;
   onPlayAyah: (ayahNum: number) => void;
   onBookmarkAyah: (ayahNum: number) => void;
+  onShareAyah?: (ayahNum: number) => void;
 }
 
 export default function AyahList({
@@ -26,6 +27,7 @@ export default function AyahList({
   isBookmarked,
   onPlayAyah,
   onBookmarkAyah,
+  onShareAyah,
 }: AyahListProps) {
   const activeRef = useRef<number | null>(null);
 
@@ -54,6 +56,7 @@ export default function AyahList({
           isBookmarked={isBookmarked(ayah.surahNumber, ayah.numberInSurah)}
           onPlay={() => onPlayAyah(ayah.numberInSurah)}
           onBookmark={() => onBookmarkAyah(ayah.numberInSurah)}
+          onShare={onShareAyah ? () => onShareAyah(ayah.numberInSurah) : undefined}
         />
       ))}
     </div>

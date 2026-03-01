@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { KhatamProgress, UserProfile } from "@/types/viral";
 import { loadKhatam, claimJuz, completeJuz, resetKhatam, getCommunityProgress, getLeaderboard, LeaderboardEntry } from "@/lib/khatam-store";
 import { loadUser } from "@/lib/user-store";
+import { getCompletedJuzFromReading } from "@/lib/reading-store";
 
 export function useKhatam() {
   const [progress, setProgress] = useState<KhatamProgress | null>(null);
@@ -13,9 +14,19 @@ export function useKhatam() {
 
   useEffect(() => {
     const p = loadKhatam();
-    setProgress(p);
+
+    // Auto-complete juz based on actual reading progress
+    const readCompleted = getCompletedJuzFromReading();
+    let updated = p;
+    for (const juz of readCompleted) {
+      if (!p.completedJuz.includes(juz)) {
+        updated = completeJuz(juz);
+      }
+    }
+
+    setProgress(updated);
     setCommunity(getCommunityProgress());
-    setLeaderboard(getLeaderboard(p.completedJuz.length));
+    setLeaderboard(getLeaderboard(updated.completedJuz.length));
     setUserProfile(loadUser());
   }, []);
 
@@ -39,7 +50,6 @@ export function useKhatam() {
 
   const join = useCallback((profile: UserProfile) => {
     setUserProfile(profile);
-    // Refresh leaderboard with new profile
     const p = loadKhatam();
     setLeaderboard(getLeaderboard(p.completedJuz.length));
   }, []);

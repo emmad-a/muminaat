@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { QuranStats } from "@/types/viral";
-import { loadStats, recordSurahVisit, recordAyahsRead, recordTimeSpent } from "@/lib/stats-store";
+import { loadStats, recordSurahVisit, recordDailyAyahs, recordTimeSpent } from "@/lib/stats-store";
 
 export function useStats() {
   const [stats, setStats] = useState<QuranStats | null>(null);
@@ -19,7 +19,7 @@ export function useStats() {
   }, []);
 
   const readAyahs = useCallback((count: number) => {
-    recordAyahsRead(count);
+    recordDailyAyahs(count);
     setStats(loadStats());
   }, []);
 

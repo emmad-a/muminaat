@@ -3,6 +3,7 @@
 import { use, useEffect, useState } from "react";
 import { useQuranContext } from "../layout";
 import { useSurahData } from "@/hooks/useSurahData";
+import { useReadingProgress } from "@/hooks/useReadingProgress";
 import SurahHeader from "@/components/quran/SurahHeader";
 import AyahList from "@/components/quran/AyahList";
 import SurahNavigator from "@/components/quran/SurahNavigator";
@@ -10,7 +11,7 @@ import ShareModal from "@/components/share/ShareModal";
 import { AyahListSkeleton } from "@/components/quran/LoadingSkeleton";
 import { saveLastRead } from "@/lib/quran-settings";
 import { recordActivity } from "@/lib/streak-store";
-import { recordSurahVisit, recordAyahsRead } from "@/lib/stats-store";
+import { recordSurahVisit } from "@/lib/stats-store";
 import { ShareCardData } from "@/types/viral";
 import { SURAH_NAMES } from "@/lib/quran-api";
 
@@ -29,13 +30,16 @@ export default function SurahPage({ params }: { params: Promise<{ id: string }> 
   } = useQuranContext();
   const [shareData, setShareData] = useState<ShareCardData | null>(null);
 
+  // Reading progress tracking (scroll-based)
+  const totalAyahs = surahData?.meta.numberOfAyahs || 0;
+  const { progress } = useReadingProgress(surahNumber, totalAyahs);
+
   // Save last read position + record streak/stats
   useEffect(() => {
     if (surahData) {
       saveLastRead({ surah: surahNumber, ayah: 1, timestamp: Date.now() });
       recordActivity();
       recordSurahVisit(surahNumber);
-      recordAyahsRead(surahData.ayahs.length);
     }
   }, [surahNumber, surahData]);
 
@@ -107,6 +111,29 @@ export default function SurahPage({ params }: { params: Promise<{ id: string }> 
     <div className="max-w-3xl mx-auto px-4 animate-fade-in">
       {/* Header */}
       {meta && <SurahHeader surah={meta} onPlayAll={handlePlayAll} />}
+
+      {/* Reading Progress Bar */}
+      {totalAyahs > 0 && (
+        <div className="mb-4">
+          <div className="flex items-center justify-between mb-1.5">
+            <span className="text-xs text-neutral-500">Reading Progress</span>
+            <span className="text-xs font-medium text-gold-400">
+              {progress.read}/{progress.total} ayahs read
+            </span>
+          </div>
+          <div className="h-2 bg-neutral-800 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-gradient-to-r from-gold-500 to-gold-400 rounded-full transition-all duration-700"
+              style={{ width: `${progress.percent}%` }}
+            />
+          </div>
+          {progress.percent === 100 && (
+            <p className="text-xs text-gold-400 mt-1.5 text-center">
+              ✨ Surah complete — MashaAllah!
+            </p>
+          )}
+        </div>
+      )}
 
       {/* Reading mode toggle */}
       <div className="flex items-center justify-center gap-2 mb-6">

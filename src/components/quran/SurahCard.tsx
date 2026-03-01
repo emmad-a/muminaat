@@ -6,9 +6,15 @@ import { SurahMeta } from "@/types/quran";
 interface SurahCardProps {
   surah: SurahMeta;
   isLastRead?: boolean;
+  readCount?: number;
 }
 
-export default function SurahCard({ surah, isLastRead }: SurahCardProps) {
+export default function SurahCard({ surah, isLastRead, readCount }: SurahCardProps) {
+  const total = surah.numberOfAyahs;
+  const read = readCount || 0;
+  const percent = total > 0 && read > 0 ? Math.round((read / total) * 100) : 0;
+  const isComplete = percent === 100;
+
   return (
     <Link
       href={`/quran/${surah.number}`}
@@ -20,14 +26,16 @@ export default function SurahCard({ surah, isLastRead }: SurahCardProps) {
     >
       {/* Number badge */}
       <div className={`w-10 h-10 flex-shrink-0 flex items-center justify-center rotate-45 rounded-lg border ${
-        isLastRead
+        isComplete
+          ? "border-gold-400/60 bg-gold-400/20"
+          : isLastRead
           ? "border-gold-400/50 bg-gold-400/10"
           : "border-gray-200 dark:border-neutral-700 group-hover:border-gold-400/30"
       } transition-colors`}>
         <span className={`-rotate-45 text-sm font-medium ${
-          isLastRead ? "text-gold-500" : "text-gray-500 dark:text-gray-400"
+          isComplete ? "text-gold-400" : isLastRead ? "text-gold-500" : "text-gray-500 dark:text-gray-400"
         }`}>
-          {surah.number}
+          {isComplete ? "✓" : surah.number}
         </span>
       </div>
 
@@ -39,6 +47,22 @@ export default function SurahCard({ surah, isLastRead }: SurahCardProps) {
         <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
           {surah.englishNameTranslation} &middot; {surah.numberOfAyahs} Ayahs
         </p>
+        {/* Progress bar */}
+        {read > 0 && (
+          <div className="flex items-center gap-2 mt-1.5">
+            <div className="flex-1 h-1 bg-neutral-200 dark:bg-neutral-700 rounded-full overflow-hidden">
+              <div
+                className={`h-full rounded-full transition-all ${
+                  isComplete ? "bg-gold-400" : "bg-gold-400/60"
+                }`}
+                style={{ width: `${percent}%` }}
+              />
+            </div>
+            <span className="text-[10px] text-neutral-400 shrink-0">
+              {read}/{total}
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Arabic name */}

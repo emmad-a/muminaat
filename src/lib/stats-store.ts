@@ -1,4 +1,5 @@
 import { QuranStats } from "@/types/viral";
+import { getTotalAyahsRead } from "./reading-store";
 
 const STATS_KEY = "muminaat_stats";
 
@@ -38,19 +39,25 @@ export function recordSurahVisit(surahNumber: number): void {
   }
 
   stats.surahVisits[surahNumber] = (stats.surahVisits[surahNumber] || 0) + 1;
+
+  // Sync ayahsRead from actual reading store
+  stats.ayahsRead = getTotalAyahsRead();
+
   saveStats(stats);
 }
 
-export function recordAyahsRead(count: number): void {
+export function recordDailyAyahs(count: number): void {
   const stats = loadStats();
   const today = getToday();
 
-  stats.ayahsRead += count;
   stats.dailyLog[today] = (stats.dailyLog[today] || 0) + count;
 
   if (!stats.firstActiveDate) {
     stats.firstActiveDate = today;
   }
+
+  // Sync total from reading store
+  stats.ayahsRead = getTotalAyahsRead();
 
   saveStats(stats);
 }

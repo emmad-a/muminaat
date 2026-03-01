@@ -8,6 +8,7 @@ import { SurahGridSkeleton } from "@/components/quran/LoadingSkeleton";
 import KhatamProgress from "@/components/quran/KhatamProgress";
 import { useKhatam } from "@/hooks/useKhatam";
 import { loadLastRead } from "@/lib/quran-settings";
+import { getAllProgress } from "@/lib/reading-store";
 import { LastReadPosition } from "@/types/quran";
 
 export default function QuranIndexPage() {
@@ -15,10 +16,12 @@ export default function QuranIndexPage() {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<"all" | "meccan" | "medinan">("all");
   const [lastRead, setLastRead] = useState<LastReadPosition | null>(null);
+  const [readingProgress, setReadingProgress] = useState<Record<number, number>>({});
   const { progress, community, leaderboard, userProfile, claim, complete, join } = useKhatam();
 
   useEffect(() => {
     setLastRead(loadLastRead());
+    setReadingProgress(getAllProgress());
   }, []);
 
   const filtered = useMemo(() => {
@@ -160,7 +163,7 @@ export default function QuranIndexPage() {
       {isLoading ? (
         <SurahGridSkeleton />
       ) : (
-        <SurahGrid surahs={filtered} lastReadSurah={lastRead?.surah} />
+        <SurahGrid surahs={filtered} lastReadSurah={lastRead?.surah} readingProgress={readingProgress} />
       )}
     </div>
   );

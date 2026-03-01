@@ -55,6 +55,22 @@ export default function Navbar() {
           <Link href="/fiqhcomparator" className={linkClass("/fiqhcomparator")}>
             Fiqh
           </Link>
+          {pathname.startsWith("/quran") && (
+            <Link
+              href="/quran/settings"
+              className={`transition-colors ${
+                pathname === "/quran/settings"
+                  ? "text-gold-400"
+                  : "text-neutral-400 hover:text-gold-400"
+              }`}
+              aria-label="Settings"
+            >
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <path d="M7.5 2.25H10.5L11.1 4.05C11.55 4.23 11.97 4.47 12.33 4.77L14.1 4.17L15.6 6.83L14.1 8.1C14.13 8.4 14.13 8.7 14.1 9L15.6 10.27L14.1 12.93L12.33 12.33C11.97 12.63 11.55 12.87 11.1 13.05L10.5 14.85H7.5L6.9 13.05C6.45 12.87 6.03 12.63 5.67 12.33L3.9 12.93L2.4 10.27L3.9 9C3.87 8.7 3.87 8.4 3.9 8.1L2.4 6.83L3.9 4.17L5.67 4.77C6.03 4.47 6.45 4.23 6.9 4.05L7.5 2.25Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
+                <circle cx="9" cy="8.55" r="2.25" stroke="currentColor" strokeWidth="1.5"/>
+              </svg>
+            </Link>
+          )}
         </nav>
       </div>
     </header>

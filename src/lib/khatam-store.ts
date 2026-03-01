@@ -59,15 +59,13 @@ export function getCommunityProgress(): { completedJuz: number[]; readers: numbe
   const now = new Date();
   const seed = now.getFullYear() * 10000 + (now.getMonth() + 1) * 100 + now.getDate();
 
-  // Pseudo-random based on date
   function seededRandom(s: number): number {
     const x = Math.sin(s) * 10000;
     return x - Math.floor(x);
   }
 
-  // Community has completed some juz based on date
   const dayOfYear = Math.floor((now.getTime() - new Date(now.getFullYear(), 0, 0).getTime()) / 86400000);
-  const baseCompleted = Math.min(30, Math.floor(dayOfYear / 12)); // Roughly one every 12 days
+  const baseCompleted = Math.min(30, Math.floor(dayOfYear / 12));
 
   const communityJuz: number[] = [];
   for (let i = 1; i <= 30; i++) {
@@ -79,4 +77,64 @@ export function getCommunityProgress(): { completedJuz: number[]; readers: numbe
   const readers = Math.floor(800 + seededRandom(seed) * 1200);
 
   return { completedJuz: communityJuz, readers };
+}
+
+// Simulated leaderboard participants
+export interface LeaderboardEntry {
+  name: string;
+  juzCompleted: number;
+  isUser: boolean;
+  streak: number;
+  avatar: string;
+}
+
+const PARTICIPANT_NAMES = [
+  "Aisha", "Fatima", "Khadijah", "Maryam", "Hafsa",
+  "Zainab", "Sumaya", "Noor", "Amina", "Ruqayyah",
+  "Safiyya", "Halima", "Asiya", "Rabia", "Huda",
+  "Layla", "Sara", "Yasmin", "Iman", "Dina",
+];
+
+const AVATARS = ["🌙", "⭐", "🌸", "🕊️", "💎", "🌺", "✨", "🦋", "🌷", "💫"];
+
+export function getLeaderboard(userCompleted: number): LeaderboardEntry[] {
+  const now = new Date();
+  const seed = now.getFullYear() * 10000 + (now.getMonth() + 1) * 100 + now.getDate();
+
+  function seededRandom(s: number): number {
+    const x = Math.sin(s) * 10000;
+    return x - Math.floor(x);
+  }
+
+  // Generate 10 simulated participants
+  const participants: LeaderboardEntry[] = [];
+  for (let i = 0; i < 10; i++) {
+    const nameIdx = Math.floor(seededRandom(seed + i * 7) * PARTICIPANT_NAMES.length);
+    const juz = Math.min(30, Math.floor(seededRandom(seed + i * 13) * 20) + 1);
+    const streak = Math.floor(seededRandom(seed + i * 19) * 45) + 1;
+    const avatarIdx = Math.floor(seededRandom(seed + i * 23) * AVATARS.length);
+
+    participants.push({
+      name: PARTICIPANT_NAMES[nameIdx],
+      juzCompleted: juz,
+      isUser: false,
+      streak,
+      avatar: AVATARS[avatarIdx],
+    });
+  }
+
+  // Add user
+  const userData = loadKhatam();
+  participants.push({
+    name: "You",
+    juzCompleted: userCompleted || userData.completedJuz.length,
+    isUser: true,
+    streak: 0, // Will be filled from streak store
+    avatar: "🤲",
+  });
+
+  // Sort by juz completed descending
+  participants.sort((a, b) => b.juzCompleted - a.juzCompleted);
+
+  return participants;
 }

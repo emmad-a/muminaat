@@ -1,7 +1,6 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
-import QuranNav from "@/components/quran/QuranNav";
 import AudioPlayer from "@/components/quran/AudioPlayer";
 import { useAudioPlayer } from "@/hooks/useAudioPlayer";
 import { useQuranSettings } from "@/hooks/useQuranSettings";
@@ -91,8 +90,7 @@ export default function QuranLayout({ children }: { children: React.ReactNode })
 
   return (
     <QuranContext.Provider value={ctx}>
-      <div className="min-h-screen bg-white dark:bg-black text-gray-900 dark:text-gray-100 transition-colors">
-        <QuranNav />
+      <div className="min-h-screen pt-14 bg-white dark:bg-black text-gray-900 dark:text-gray-100 transition-colors">
         <main className={showPlayer ? "pb-20" : ""}>
           {children}
         </main>

@@ -3,32 +3,8 @@ import Link from "next/link";
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-black text-white">
-      {/* Nav */}
-      <header className="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-black/80 border-b border-neutral-800/50">
-        <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <span className="font-logo text-gold-400 text-lg">مومنات</span>
-            <span className="text-sm font-semibold tracking-tight text-white/90">Muminaat</span>
-          </Link>
-          <nav className="flex items-center gap-8">
-            <Link
-              href="/quran"
-              className="text-sm text-neutral-400 hover:text-gold-400 transition-colors"
-            >
-              Quran
-            </Link>
-            <Link
-              href="/fiqhcomparator"
-              className="text-sm text-neutral-400 hover:text-gold-400 transition-colors"
-            >
-              Fiqh
-            </Link>
-          </nav>
-        </div>
-      </header>
-
       {/* Hero */}
-      <section className="pt-36 pb-28 px-6 relative overflow-hidden">
+      <section className="pt-28 pb-28 px-6 relative overflow-hidden">
         {/* Subtle radial glow */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gold-400/5 rounded-full blur-3xl pointer-events-none" />
 

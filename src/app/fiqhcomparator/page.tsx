@@ -63,40 +63,7 @@ export default function FiqhComparatorPage() {
   const totalCount = ALL_QUESTIONS.length;
 
   return (
-    <div className="min-h-screen">
-      {/* Nav */}
-      <header className="bg-white border-b border-gray-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Link href="/" className="flex items-center gap-2.5">
-                <span className="font-logo text-gold-400 text-xl leading-none">مومنات</span>
-                <div>
-                  <h1 className="text-lg font-bold text-gray-900 leading-tight">Muminaat</h1>
-                  <p className="text-[11px] text-gray-400 leading-tight">Fiqh Comparator</p>
-                </div>
-              </Link>
-            </div>
-            <nav className="hidden md:flex items-center gap-6">
-              <Link href="/" className="text-gray-600 hover:text-gold-500 font-medium transition-colors">
-                Home
-              </Link>
-              <Link href="/quran" className="text-gray-600 hover:text-gold-500 font-medium transition-colors">
-                Quran
-              </Link>
-              <a
-                href="https://raleighmasjid.org/wp-content/uploads/2021/07/Differences_in_Fiqh_Made_Easy_Part_I__II.pdf"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-600 hover:text-gold-500 font-medium transition-colors"
-              >
-                Source PDF
-              </a>
-            </nav>
-          </div>
-        </div>
-      </header>
-
+    <div className="min-h-screen pt-14">
       {/* Hero Section */}
       <section className="bg-gradient-to-br from-neutral-900 via-neutral-900 to-black text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">

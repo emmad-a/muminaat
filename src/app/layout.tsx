@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Navbar from "@/components/Navbar";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -46,7 +47,10 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="min-h-screen bg-[#fafafa] dark:bg-black">{children}</body>
+      <body className="min-h-screen bg-[#fafafa] dark:bg-black">
+        <Navbar />
+        {children}
+      </body>
     </html>
   );
 }

@@ -2,20 +2,21 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Muminaat - Fiqh Comparator | Compare Islamic Rulings Across Madhabs",
+  title: "Muminaat — Quran & Islamic Scholarship",
   description:
-    "Compare Islamic fiqh rulings across the four Sunni madhabs (Hanafi, Maliki, Shafi'i, Hanbali). Authentic scholarly positions with evidence from Quran and Sunnah.",
+    "Read the Quran with Arabic text, English translations, and audio recitations. Compare fiqh rulings across the four Sunni madhabs.",
   keywords: [
-    "Islamic fiqh",
-    "madhab comparison",
+    "Quran",
+    "Islamic",
+    "Muminaat",
+    "fiqh",
+    "madhab",
     "Hanafi",
     "Maliki",
     "Shafi'i",
     "Hanbali",
-    "Islamic rulings",
-    "prayer",
-    "wudu",
-    "salah",
+    "recitation",
+    "Arabic",
   ],
 };
 
@@ -25,8 +26,27 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className="bg-gray-50 min-h-screen">{children}</body>
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              try {
+                const theme = localStorage.getItem('muminaat_quran_settings');
+                if (theme) {
+                  const parsed = JSON.parse(theme);
+                  if (parsed.theme === 'dark' || (parsed.theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                    document.documentElement.classList.add('dark');
+                  }
+                } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                  document.documentElement.classList.add('dark');
+                }
+              } catch(e) {}
+            `,
+          }}
+        />
+      </head>
+      <body className="min-h-screen bg-[#fafafa] dark:bg-black">{children}</body>
     </html>
   );
 }

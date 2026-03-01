@@ -23,6 +23,7 @@
     "@types/react": "^19.2.10",
     "@types/react-dom": "^19.2.3",
     "autoprefixer": "^10.4.23",
+    "lightningcss": "^1.31.1",
     "next": "^16.1.6",
     "postcss": "^8.5.6",
     "react": "^19.2.4",

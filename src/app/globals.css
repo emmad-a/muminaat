@@ -1,5 +1,5 @@
 /* Import Google Fonts - must come before tailwindcss */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Amiri:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Amiri:wght@400;700&family=Aref+Ruqaa:wght@400;700&display=swap');
 
 @import "tailwindcss";
 
@@ -17,20 +17,41 @@
   --color-primary-800: #166534;
   --color-primary-900: #14532d;
 
-  --color-gold-50: #fffbeb;
-  --color-gold-100: #fef3c7;
-  --color-gold-200: #fde68a;
-  --color-gold-300: #fcd34d;
-  --color-gold-400: #fbbf24;
-  --color-gold-500: #f59e0b;
-  --color-gold-600: #d97706;
-  --color-gold-700: #b45309;
-  --color-gold-800: #92400e;
-  --color-gold-900: #78350f;
+  --color-gold-50: #fdf9ef;
+  --color-gold-100: #f7edd5;
+  --color-gold-200: #eedcab;
+  --color-gold-300: #dcc48a;
+  --color-gold-400: #c9a84c;
+  --color-gold-500: #b8942e;
+  --color-gold-600: #9a7824;
+  --color-gold-700: #7d5f1e;
+  --color-gold-800: #624a1a;
+  --color-gold-900: #4a3715;
 
   /* Custom fonts */
   --font-arabic: 'Amiri', serif;
+  --font-logo: 'Aref Ruqaa', serif;
   --font-sans: 'Inter', system-ui, sans-serif;
+
+  /* Animation */
+  --animate-fade-in: fadeIn 0.4s ease forwards;
+  --animate-slide-up: slideUp 0.3s ease-out forwards;
+  --animate-glow: glow 3s ease-in-out infinite;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+@keyframes glow {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
 }
 
 /* Base styles */
@@ -44,6 +65,10 @@ body {
   font-family: var(--font-arabic);
 }
 
+.font-logo {
+  font-family: var(--font-logo);
+}
+
 /* Smooth scrolling */
 html {
   scroll-behavior: smooth;
@@ -51,19 +76,76 @@ html {
 
 /* Custom scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: #d1d5db;
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: #9ca3af;
+}
+
+/* Dark mode scrollbar */
+.dark ::-webkit-scrollbar-thumb {
+  background: #404040;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #525252;
+}
+
+/* Frosted glass utility */
+.glass {
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+}
+
+.dark .glass {
+  background: rgba(0, 0, 0, 0.82);
+}
+
+/* Arabic text styling */
+.quran-arabic {
+  font-family: var(--font-arabic);
+  direction: rtl;
+  line-height: 2.2;
+  text-align: right;
+}
+
+/* Gold underline used in logo branding */
+.gold-underline {
+  position: relative;
+  display: inline-block;
+}
+
+.gold-underline::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #c9a84c, transparent);
+}
+
+/* Gold text gradient for headings */
+.text-gold-gradient {
+  background: linear-gradient(135deg, #dcc48a 0%, #c9a84c 50%, #b8942e 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Selection color */
+::selection {
+  background: rgba(201, 168, 76, 0.3);
 }

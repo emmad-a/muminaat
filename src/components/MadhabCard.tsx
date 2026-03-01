@@ -9,10 +9,10 @@ interface MadhabCardProps {
 
 const colorClasses: Record<string, { bg: string; border: string; text: string; badge: string }> = {
   emerald: {
-    bg: "bg-emerald-50",
-    border: "border-emerald-200",
-    text: "text-emerald-800",
-    badge: "bg-emerald-100 text-emerald-700",
+    bg: "bg-gold-50",
+    border: "border-gold-200",
+    text: "text-gold-700",
+    badge: "bg-gold-100 text-gold-700",
   },
   amber: {
     bg: "bg-amber-50",

@@ -42,7 +42,7 @@ export default function SearchBar({ onSearch, placeholder = "Search fiqh questio
     <div className="relative mb-6">
       <div
         className={`relative flex items-center transition-all duration-200 ${
-          isFocused ? "ring-2 ring-emerald-500 ring-offset-2" : ""
+          isFocused ? "ring-2 ring-gold-400 ring-offset-2" : ""
         }`}
       >
         {/* Search Icon */}
@@ -72,7 +72,7 @@ export default function SearchBar({ onSearch, placeholder = "Search fiqh questio
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
           placeholder={placeholder}
-          className="w-full pl-12 pr-20 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:border-emerald-500 transition-colors"
+          className="w-full pl-12 pr-20 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:border-gold-400 transition-colors"
         />
 
         {/* Keyboard Shortcut Hint */}
@@ -109,10 +109,10 @@ export default function SearchBar({ onSearch, placeholder = "Search fiqh questio
         <div className="absolute top-full left-0 right-0 mt-2 p-3 bg-white rounded-xl shadow-lg border border-gray-100 z-10">
           <p className="text-sm text-gray-500 mb-2">Search tips:</p>
           <ul className="text-sm text-gray-600 space-y-1">
-            <li>• Search by question: <span className="text-emerald-600">&quot;wudu&quot;</span></li>
-            <li>• Search by topic: <span className="text-emerald-600">&quot;prayer&quot;</span></li>
-            <li>• Search by ruling: <span className="text-emerald-600">&quot;permissible&quot;</span></li>
-            <li>• Search in Arabic: <span className="text-emerald-600 font-arabic">&quot;الوضوء&quot;</span></li>
+            <li>• Search by question: <span className="text-gold-500">&quot;wudu&quot;</span></li>
+            <li>• Search by topic: <span className="text-gold-500">&quot;prayer&quot;</span></li>
+            <li>• Search by ruling: <span className="text-gold-500">&quot;permissible&quot;</span></li>
+            <li>• Search in Arabic: <span className="text-gold-500 font-arabic">&quot;الوضوء&quot;</span></li>
           </ul>
         </div>
       )}

@@ -1,20 +1,51 @@
 "use client";
 
-import { FiqhQuestion } from "@/types/fiqh";
+import { useState, useEffect } from "react";
+import { FiqhQuestion, ReviewStatus } from "@/types/fiqh";
 import MadhabCard from "./MadhabCard";
+import ReportIssueModal from "./ReportIssueModal";
+import { getReviewStatus } from "@/lib/review-store";
 
 interface QuestionCardProps {
   question: FiqhQuestion;
 }
 
+function ReviewBadge({ status }: { status: ReviewStatus }) {
+  if (status === "unreviewed") return null;
+
+  const config = {
+    scholar_verified: { dot: "bg-blue-400", text: "Scholar Verified", bg: "bg-blue-500/20" },
+    ai_audited: { dot: "bg-yellow-400", text: "AI Checked", bg: "bg-yellow-500/20" },
+    needs_correction: { dot: "bg-red-400", text: "Under Review", bg: "bg-red-500/20" },
+  } as const;
+
+  const c = config[status];
+  return (
+    <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium text-white/90 ${c.bg}`}>
+      <span className={`w-1.5 h-1.5 rounded-full ${c.dot}`} />
+      {c.text}
+    </span>
+  );
+}
+
 export default function QuestionCard({ question }: QuestionCardProps) {
+  const [showReportModal, setShowReportModal] = useState(false);
+  const [reviewStatus, setReviewStatus] = useState<ReviewStatus>("unreviewed");
+
+  useEffect(() => {
+    setReviewStatus(getReviewStatus(question.id));
+  }, [question.id]);
+
   return (
     <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
       {/* Question Header */}
-      <div className="bg-gradient-to-r from-emerald-600 to-emerald-700 px-6 py-5">
-        <h2 className="text-xl font-bold text-white mb-1">{question.question}</h2>
+      <div className="bg-gradient-to-r from-neutral-900 to-black px-6 py-5">
+        <div className="flex items-start justify-between gap-3">
+          <h2 className="text-xl font-bold text-white mb-1">{question.question}</h2>
+          <ReviewBadge status={reviewStatus} />
+        </div>
         {question.questionArabic && (
-          <p className="text-emerald-100 font-arabic text-lg text-right" dir="rtl">
+          <p className="text-gold-300/70 font-arabic text-lg text-right" dir="rtl">
             {question.questionArabic}
           </p>
         )}
@@ -73,7 +104,25 @@ export default function QuestionCard({ question }: QuestionCardProps) {
             </div>
           </div>
         )}
+
+        {/* Report Issue */}
+        <div className="border-t pt-3 mt-4 flex justify-end">
+          <button
+            onClick={() => setShowReportModal(true)}
+            className="text-xs text-gray-400 hover:text-gold-500 transition-colors"
+          >
+            Report an Issue
+          </button>
+        </div>
       </div>
+
+      {showReportModal && (
+        <ReportIssueModal
+          questionId={question.id}
+          questionText={question.question}
+          onClose={() => setShowReportModal(false)}
+        />
+      )}
     </div>
   );
 }

@@ -11,6 +11,24 @@ export interface Reciter {
   everyAyahPath: string;
   cdnSlug: string;
   mp3QuranPath: string;
+  quranCdnId: number;
+}
+
+/** [wordIndex, startMs, endMs] — absolute timestamps within full surah audio */
+export type WordSegment = [number, number, number];
+
+export interface VerseSegments {
+  segments: WordSegment[];
+  timestampFrom: number;
+  timestampTo: number;
+}
+
+/** Keyed by verse number (1-indexed) */
+export type SurahSegments = Record<number, VerseSegments>;
+
+export interface ActiveWordInfo {
+  ayahNumber: number;
+  wordIndex: number;
 }
 
 export interface SurahMeta {
@@ -73,6 +91,7 @@ export interface QuranSettings {
   readingMode: boolean;
   playbackRate: number;
   audioMode: AudioMode;
+  wordHighlight: boolean;
 }
 
 export interface Bookmark {

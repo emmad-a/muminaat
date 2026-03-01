@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { Ayah } from "@/types/quran";
+import { ActiveWordInfo, Ayah } from "@/types/quran";
 import AyahRow from "./AyahRow";
 
 interface AyahListProps {
@@ -12,6 +12,7 @@ interface AyahListProps {
   translationFontSize: number;
   showTranslation: boolean;
   isBookmarked: (surah: number, ayah: number) => boolean;
+  activeWord: ActiveWordInfo | null;
   onPlayAyah: (ayahNum: number) => void;
   onBookmarkAyah: (ayahNum: number) => void;
   onShareAyah?: (ayahNum: number) => void;
@@ -25,6 +26,7 @@ export default function AyahList({
   translationFontSize,
   showTranslation,
   isBookmarked,
+  activeWord,
   onPlayAyah,
   onBookmarkAyah,
   onShareAyah,
@@ -54,6 +56,7 @@ export default function AyahList({
           translationFontSize={translationFontSize}
           showTranslation={showTranslation}
           isBookmarked={isBookmarked(ayah.surahNumber, ayah.numberInSurah)}
+          activeWordIndex={activeWord?.ayahNumber === ayah.numberInSurah ? activeWord.wordIndex : null}
           onPlay={() => onPlayAyah(ayah.numberInSurah)}
           onBookmark={() => onBookmarkAyah(ayah.numberInSurah)}
           onShare={onShareAyah ? () => onShareAyah(ayah.numberInSurah) : undefined}

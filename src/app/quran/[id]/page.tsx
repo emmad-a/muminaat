@@ -14,6 +14,9 @@ import { recordActivity } from "@/lib/streak-store";
 import { recordSurahVisit } from "@/lib/stats-store";
 import { ShareCardData } from "@/types/viral";
 import { SURAH_NAMES } from "@/lib/quran-api";
+import { getReciterById } from "@/lib/quran-audio";
+import { useSurahSegments } from "@/hooks/useSurahSegments";
+import { useWordHighlight } from "@/hooks/useWordHighlight";
 
 export default function SurahPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -31,6 +34,16 @@ export default function SurahPage({ params }: { params: Promise<{ id: string }> 
   } = useQuranContext();
   const [shareData, setShareData] = useState<ShareCardData | null>(null);
 
+  // Word-by-word highlighting
+  const reciter = getReciterById(settings.reciterId);
+  const isPlayingThisSurah = playerState.currentSurah === surahNumber;
+  const segments = useSurahSegments(
+    reciter.quranCdnId,
+    isPlayingThisSurah ? surahNumber : null,
+    settings.wordHighlight
+  );
+  const activeWord = useWordHighlight(segments, playerState, settings.wordHighlight && isPlayingThisSurah);
+
   // Reading progress tracking (scroll-based)
   const totalAyahs = surahData?.meta.numberOfAyahs || 0;
   const { progress } = useReadingProgress(surahNumber, totalAyahs);
@@ -44,9 +57,13 @@ export default function SurahPage({ params }: { params: Promise<{ id: string }> 
     }
   }, [surahNumber, surahData]);
 
+  // In ayah mode, use playerState.currentAyah.
+  // In surah mode with word highlighting, derive active ayah from segments.
   const activeAyah =
-    playerState.currentSurah === surahNumber && playerState.audioMode === "ayah"
-      ? playerState.currentAyah
+    playerState.currentSurah === surahNumber
+      ? playerState.audioMode === "ayah"
+        ? playerState.currentAyah
+        : activeWord?.ayahNumber ?? null
       : null;
 
   const handlePlayAyah = (ayahNum: number) => {
@@ -177,6 +194,7 @@ export default function SurahPage({ params }: { params: Promise<{ id: string }> 
           translationFontSize={settings.translationFontSize}
           showTranslation={settings.showTranslation}
           isBookmarked={isBookmarked}
+          activeWord={activeWord}
           onPlayAyah={handlePlayAyah}
           onBookmarkAyah={handleBookmark}
           onShareAyah={handleShare}

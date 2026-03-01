@@ -101,6 +101,19 @@ export default function AudioPlayer() {
 
         {/* Controls */}
         <div className="flex items-center gap-1">
+          {/* Word Highlight Toggle */}
+          <button
+            onClick={() => updateSetting("wordHighlight", !settings.wordHighlight)}
+            className={`w-8 h-8 flex items-center justify-center rounded-full text-xs font-bold transition-colors ${
+              settings.wordHighlight
+                ? "text-gold-400 bg-gold-400/10"
+                : "text-gray-400 hover:text-gold-400 hover:bg-gray-100 dark:hover:bg-neutral-800"
+            }`}
+            title={settings.wordHighlight ? "Word highlight: ON" : "Word highlight: OFF"}
+          >
+            Aa
+          </button>
+
           {/* Audio Mode Toggle */}
           <button
             onClick={toggleAudioMode}

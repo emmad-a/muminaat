@@ -10,6 +10,7 @@ interface AyahRowProps {
   translationFontSize: number;
   showTranslation: boolean;
   isBookmarked: boolean;
+  activeWordIndex: number | null;
   onPlay: () => void;
   onBookmark: () => void;
   onShare?: () => void;
@@ -23,6 +24,7 @@ export default function AyahRow({
   translationFontSize,
   showTranslation,
   isBookmarked,
+  activeWordIndex,
   onPlay,
   onBookmark,
   onShare,
@@ -41,7 +43,7 @@ export default function AyahRow({
           style={{ fontSize: arabicFontSize }}
           dir="rtl"
         >
-          {ayah.text}{" "}
+          <ArabicText text={ayah.text} activeWordIndex={activeWordIndex} />{" "}
           <span className="text-gold-400 text-[0.6em]">
             ﴿{toArabicNumeral(ayah.numberInSurah)}﴾
           </span>
@@ -127,7 +129,7 @@ export default function AyahRow({
           className="font-arabic leading-[2.2] text-gray-800 dark:text-gray-200"
           style={{ fontSize: arabicFontSize }}
         >
-          {ayah.text}
+          <ArabicText text={ayah.text} activeWordIndex={activeWordIndex} />
         </p>
       </div>
 
@@ -148,6 +150,53 @@ export default function AyahRow({
         </p>
       )}
     </div>
+  );
+}
+
+/**
+ * Renders Arabic text with optional word-level highlighting.
+ * When activeWordIndex is null, renders as a plain text node (zero cost).
+ * When set, splits text by spaces and highlights the active word in gold.
+ */
+function ArabicText({ text, activeWordIndex }: { text: string; activeWordIndex: number | null }) {
+  // Always split into spans so React doesn't reconcile between text nodes and elements
+  const words = text.split(" ");
+
+  if (activeWordIndex === null) {
+    // Still render spans, just with no highlight — avoids DOM structure thrashing
+    return (
+      <>
+        {words.map((word, idx) => (
+          <span key={idx}>
+            {word}
+            {idx < words.length - 1 ? " " : ""}
+          </span>
+        ))}
+      </>
+    );
+  }
+
+  return (
+    <>
+      {words.map((word, idx) => (
+        <span
+          key={idx}
+          className={
+            idx === activeWordIndex
+              ? "text-gold-400 transition-colors duration-150"
+              : "transition-colors duration-150"
+          }
+          style={
+            idx === activeWordIndex
+              ? { textShadow: "0 0 8px rgba(201,168,76,0.4)" }
+              : undefined
+          }
+        >
+          {word}
+          {idx < words.length - 1 ? " " : ""}
+        </span>
+      ))}
+    </>
   );
 }
 

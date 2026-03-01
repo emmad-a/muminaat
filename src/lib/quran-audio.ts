@@ -12,6 +12,7 @@ export const RECITERS: Reciter[] = [
     everyAyahPath: "Alafasy_128kbps",
     cdnSlug: "ar.alafasy",
     mp3QuranPath: "server8.mp3quran.net/afs",
+    quranCdnId: 7,
   },
   {
     id: "basit",
@@ -20,6 +21,7 @@ export const RECITERS: Reciter[] = [
     everyAyahPath: "Abdul_Basit_Murattal_192kbps",
     cdnSlug: "ar.abdulbasitmurattal",
     mp3QuranPath: "server7.mp3quran.net/basit",
+    quranCdnId: 2,
   },
   {
     id: "husary",
@@ -28,6 +30,7 @@ export const RECITERS: Reciter[] = [
     everyAyahPath: "Husary_128kbps",
     cdnSlug: "ar.husary",
     mp3QuranPath: "server13.mp3quran.net/husr",
+    quranCdnId: 6,
   },
   {
     id: "sudais",
@@ -36,6 +39,7 @@ export const RECITERS: Reciter[] = [
     everyAyahPath: "Abdurrahmaan_As-Sudais_192kbps",
     cdnSlug: "ar.abdurrrahmaansudais",
     mp3QuranPath: "server11.mp3quran.net/sds",
+    quranCdnId: 3,
   },
 ];
 

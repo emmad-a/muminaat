@@ -1,4 +1,5 @@
 import { KhatamProgress } from "@/types/viral";
+import { loadUser } from "./user-store";
 
 const KHATAM_KEY = "muminaat_khatam";
 
@@ -125,12 +126,13 @@ export function getLeaderboard(userCompleted: number): LeaderboardEntry[] {
 
   // Add user
   const userData = loadKhatam();
+  const userProfile = loadUser();
   participants.push({
-    name: "You",
+    name: userProfile?.name || "You",
     juzCompleted: userCompleted || userData.completedJuz.length,
     isUser: true,
-    streak: 0, // Will be filled from streak store
-    avatar: "🤲",
+    streak: 0,
+    avatar: userProfile?.avatar || "🤲",
   });
 
   // Sort by juz completed descending

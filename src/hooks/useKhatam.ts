@@ -1,19 +1,22 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { KhatamProgress } from "@/types/viral";
+import { KhatamProgress, UserProfile } from "@/types/viral";
 import { loadKhatam, claimJuz, completeJuz, resetKhatam, getCommunityProgress, getLeaderboard, LeaderboardEntry } from "@/lib/khatam-store";
+import { loadUser } from "@/lib/user-store";
 
 export function useKhatam() {
   const [progress, setProgress] = useState<KhatamProgress | null>(null);
   const [community, setCommunity] = useState<{ completedJuz: number[]; readers: number }>({ completedJuz: [], readers: 0 });
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
 
   useEffect(() => {
     const p = loadKhatam();
     setProgress(p);
     setCommunity(getCommunityProgress());
     setLeaderboard(getLeaderboard(p.completedJuz.length));
+    setUserProfile(loadUser());
   }, []);
 
   const claim = useCallback((juz: number) => {
@@ -34,5 +37,12 @@ export function useKhatam() {
     setLeaderboard(getLeaderboard(0));
   }, []);
 
-  return { progress, community, leaderboard, claim, complete, reset };
+  const join = useCallback((profile: UserProfile) => {
+    setUserProfile(profile);
+    // Refresh leaderboard with new profile
+    const p = loadKhatam();
+    setLeaderboard(getLeaderboard(p.completedJuz.length));
+  }, []);
+
+  return { progress, community, leaderboard, userProfile, claim, complete, reset, join };
 }

@@ -15,7 +15,7 @@ export default function QuranIndexPage() {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<"all" | "meccan" | "medinan">("all");
   const [lastRead, setLastRead] = useState<LastReadPosition | null>(null);
-  const { progress, community, leaderboard, claim, complete } = useKhatam();
+  const { progress, community, leaderboard, userProfile, claim, complete, join } = useKhatam();
 
   useEffect(() => {
     setLastRead(loadLastRead());
@@ -86,8 +86,10 @@ export default function QuranIndexPage() {
           progress={progress}
           community={community}
           leaderboard={leaderboard}
+          userProfile={userProfile}
           onClaim={claim}
           onComplete={complete}
+          onJoin={join}
         />
       </div>
 

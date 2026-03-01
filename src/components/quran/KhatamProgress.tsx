@@ -1,19 +1,100 @@
 "use client";
 
 import { useState } from "react";
-import { KhatamProgress as KhatamProgressType } from "@/types/viral";
+import { KhatamProgress as KhatamProgressType, UserProfile } from "@/types/viral";
 import { LeaderboardEntry } from "@/lib/khatam-store";
+import { USER_AVATARS, createUser } from "@/lib/user-store";
 
 interface KhatamProgressProps {
   progress: KhatamProgressType | null;
   community: { completedJuz: number[]; readers: number };
   leaderboard: LeaderboardEntry[];
+  userProfile: UserProfile | null;
   onClaim: (juz: number) => void;
   onComplete: (juz: number) => void;
+  onJoin: (profile: UserProfile) => void;
 }
 
-export default function KhatamProgress({ progress, community, leaderboard, onClaim, onComplete }: KhatamProgressProps) {
+function JoinForm({ onJoin }: { onJoin: (profile: UserProfile) => void }) {
+  const [name, setName] = useState("");
+  const [avatar, setAvatar] = useState("🤲");
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name.trim()) return;
+    const profile = createUser(name, avatar);
+    onJoin(profile);
+  };
+
+  return (
+    <div className="bg-neutral-900 border border-neutral-800 rounded-2xl p-6">
+      <div className="text-center mb-6">
+        <span className="text-4xl mb-3 block">📖</span>
+        <h3 className="text-xl font-bold text-white mb-2">Join the Community Khatam</h3>
+        <p className="text-sm text-neutral-400">
+          Read the Quran together with the community. Claim juz, track your progress, and see where you rank.
+        </p>
+      </div>
+
+      <form onSubmit={handleSubmit} className="space-y-5">
+        {/* Name Input */}
+        <div>
+          <label className="block text-sm font-medium text-neutral-300 mb-2">
+            Your Name
+          </label>
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Enter your name..."
+            maxLength={20}
+            className="w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-xl text-white placeholder:text-neutral-500 focus:outline-none focus:border-gold-400/50 transition-colors"
+          />
+        </div>
+
+        {/* Avatar Picker */}
+        <div>
+          <label className="block text-sm font-medium text-neutral-300 mb-2">
+            Choose Your Avatar
+          </label>
+          <div className="grid grid-cols-6 gap-2">
+            {USER_AVATARS.map((a) => (
+              <button
+                key={a}
+                type="button"
+                onClick={() => setAvatar(a)}
+                className={`aspect-square rounded-xl flex items-center justify-center text-2xl transition-all ${
+                  avatar === a
+                    ? "bg-gold-500/20 border-2 border-gold-400 scale-110"
+                    : "bg-neutral-800 border border-neutral-700 hover:border-neutral-600"
+                }`}
+              >
+                {a}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Submit */}
+        <button
+          type="submit"
+          disabled={!name.trim()}
+          className="w-full py-3.5 bg-gold-500 hover:bg-gold-600 disabled:bg-neutral-700 disabled:text-neutral-500 text-black font-semibold rounded-xl transition-colors"
+        >
+          Join Khatam Challenge
+        </button>
+      </form>
+    </div>
+  );
+}
+
+export default function KhatamProgress({ progress, community, leaderboard, userProfile, onClaim, onComplete, onJoin }: KhatamProgressProps) {
   const [tab, setTab] = useState<"progress" | "leaderboard">("progress");
+
+  // Show join form if no user profile
+  if (!userProfile) {
+    return <JoinForm onJoin={onJoin} />;
+  }
 
   if (!progress) return null;
 
@@ -30,12 +111,26 @@ export default function KhatamProgress({ progress, community, leaderboard, onCla
             <span>📖</span> Community Khatam
           </h3>
           <p className="text-sm text-neutral-400 mt-0.5">
-            {community.readers.toLocaleString()} readers participating
+            {community.readers.toLocaleString()} readers participating · Welcome, {userProfile.name}!
           </p>
         </div>
         <div className="text-right">
           <span className="text-2xl font-bold text-gold-400">{percentage}%</span>
           <p className="text-xs text-neutral-500">{totalCompleted}/30 Juz</p>
+        </div>
+      </div>
+
+      {/* Your Stats Bar */}
+      <div className="flex items-center gap-3 bg-gold-500/10 border border-gold-500/20 rounded-xl px-4 py-3 mb-5">
+        <span className="text-2xl">{userProfile.avatar}</span>
+        <div className="flex-1">
+          <p className="text-sm font-semibold text-gold-400">{userProfile.name}</p>
+          <p className="text-xs text-neutral-400">
+            {progress.completedJuz.length} juz completed · {progress.claimedJuz.length} claimed
+          </p>
+        </div>
+        <div className="text-right">
+          <span className="text-lg font-bold text-gold-400">{progress.completedJuz.length}/30</span>
         </div>
       </div>
 
@@ -103,10 +198,10 @@ export default function KhatamProgress({ progress, community, leaderboard, onCla
                   className={`aspect-square rounded-lg flex items-center justify-center text-xs font-medium transition-all border border-transparent ${bgClass}`}
                   title={
                     isCompleted
-                      ? `Juz ${juz} — Completed`
+                      ? `Juz ${juz} — Completed ✓`
                       : isClaimed
-                      ? `Juz ${juz} — Click to mark complete`
-                      : `Juz ${juz} — Click to claim`
+                      ? `Juz ${juz} — Tap to mark complete`
+                      : `Juz ${juz} — Tap to claim`
                   }
                 >
                   {isCompleted ? "✓" : juz}

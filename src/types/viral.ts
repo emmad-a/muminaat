@@ -29,6 +29,13 @@ export interface QuranStats {
   firstActiveDate: string | null;
 }
 
+// User Profile
+export interface UserProfile {
+  name: string;
+  avatar: string;
+  joinedAt: string;
+}
+
 // Khatam
 export interface KhatamProgress {
   claimedJuz: number[]; // juz numbers claimed by user

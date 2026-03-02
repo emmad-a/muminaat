@@ -1,6 +1,6 @@
 "use client";
 
-import { useQuranContext } from "@/app/quran/layout";
+import { useQuranContext } from "@/components/quran/QuranProvider";
 import { SURAH_NAMES } from "@/lib/quran-api";
 import { getReciterById } from "@/lib/quran-audio";
 

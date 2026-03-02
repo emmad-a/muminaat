@@ -1,6 +1,6 @@
 "use client";
 
-import { useQuranContext } from "../layout";
+import { useQuranContext } from "@/components/quran/QuranProvider";
 import { RECITERS } from "@/lib/quran-audio";
 import { AudioMode } from "@/types/quran";
 

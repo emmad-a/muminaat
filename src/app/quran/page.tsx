@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
-import { useQuranContext } from "./layout";
+import { useQuranContext } from "@/components/quran/QuranProvider";
 import SurahGrid from "@/components/quran/SurahGrid";
 import { SurahGridSkeleton } from "@/components/quran/LoadingSkeleton";
 import KhatamProgress from "@/components/quran/KhatamProgress";
